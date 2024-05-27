@@ -20,17 +20,17 @@ async def arping(target_ip):
     await main_intro(target_ip)
 
 async def nmap_tcp(target_ip):
-    command_nmap_tcp = f"sudo nmap -sP {target_ip} > nmap_tcp_output.txt"
+    command_nmap_tcp = f"sudo nmap -sP {target_ip} -o nmap_tcp_output.txt"
     await run_command(command_nmap_tcp)
     await main_intro(target_ip)
 
 async def nmap_udp(target_ip):
-    command_nmap_udp = f"sudo nmap -sU {target_ip} > nmap_udp_output.txt"
+    command_nmap_udp = f"sudo nmap -sU {target_ip} -o nmap_udp_output.txt"
     await run_command(command_nmap_udp)
     await main_intro(target_ip)
 
 async def nmap_service(target_ip):
-    command_nmap_service = f"sudo nmap -sV {target_ip} > nmap_service_output.txt"
+    command_nmap_service = f"sudo nmap -sV {target_ip} -o nmap_service_output.txt"
     await run_command(command_nmap_service)
     await main_intro(target_ip)
 
