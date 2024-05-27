@@ -86,6 +86,7 @@ async def main():
     new_folder = input("Please insert the name of the folder for the workspace: ")
     new_folder_command = f"sudo mkdir {new_folder}"
     await run_command(new_folder_command)
+    os.chdir(new_folder)
     target_ip = input("Please enter Target IP: ")
     await main_intro(target_ip)
 
