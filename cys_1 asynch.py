@@ -9,10 +9,17 @@ async def run_command(command):
         print(f"Error: {stderr.decode()}")
     return stdout.decode()
 
-async def fping(target_ip):
-    command_fping = f"fping -a -g {target_ip} > fping_output.txt"
-    await run_command(command_fping)
-    await main_intro(target_ip)
+#async def fping(target_ip):
+    #command_fping = f"fping -a -g {target_ip} > fping_output.txt"
+    #await run_command(command_fping)
+    #await main_intro(target_ip)
+
+def run_fping(target_ip):
+    command = f"fping -a -g {target_ip} > fping_output.txt"
+    result = subprocess.run(command, shell=True)
+    print("Command executed, check fping_output.txt for results.")
+
+run_fping('192.168.1.0/24')
 
 async def arping(target_ip):
     command_arping = f"arping -I eth0 {target_ip} > arping_output.txt"
@@ -20,22 +27,22 @@ async def arping(target_ip):
     await main_intro(target_ip)
 
 async def nmap_tcp(target_ip):
-    command_nmap_tcp = f"sudo nmap -sP {target_ip} -o nmap_tcp_output.txt"
+    command_nmap_tcp = f"sudo nmap -sP {target_ip} -oN nmap_tcp_output.txt"
     await run_command(command_nmap_tcp)
     await main_intro(target_ip)
 
 async def nmap_udp(target_ip):
-    command_nmap_udp = f"sudo nmap -sU {target_ip} -o nmap_udp_output.txt"
+    command_nmap_udp = f"sudo nmap -sU {target_ip} -oN nmap_udp_output.txt"
     await run_command(command_nmap_udp)
     await main_intro(target_ip)
 
 async def nmap_service(target_ip):
-    command_nmap_service = f"sudo nmap -sV {target_ip} -o nmap_service_output.txt"
+    command_nmap_service = f"sudo nmap -sV {target_ip} -oN nmap_service_output.txt"
     await run_command(command_nmap_service)
     await main_intro(target_ip)
 
 async def nmap_port(target_ip):
-    command_nmap_port = f"sudo nmap -p- {target_ip} > nmap_port_output.txt"
+    command_nmap_port = f"sudo nmap -p- {target_ip} -oN nmap_port_output.txt"
     await run_command(command_nmap_port)
     await main_intro(target_ip)
 
