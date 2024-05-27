@@ -113,7 +113,7 @@ async def main_intro(target_ip):
    elif user_dec == "7":
       await dirbuster(target_ip)
    elif user_dec == "8":
-       await domainchecker(target_ip)
+       await domain_checker(target_ip)
 
 async def main():
     new_folder = input("Please insert the name of the folder for the workspace: ")

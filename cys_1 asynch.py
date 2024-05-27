@@ -9,33 +9,34 @@ async def run_command(command):
         print(f"Error: {stderr.decode()}")
     return stdout.decode()
 
-async def fping(target_ip):
-    command_fping = f"fping -a -g {target_ip} > fping_output.txt"
-    await run_command(command_fping)
-    await main_intro(target_ip)
+def fping(target_ip):
+    command = f"fping -a -g {target_ip} > fping_output.txt"
+    result = subprocess.run(command, shell=True)
 
-async def arping(target_ip):
-    command_arping = f"arping -I eth0 {target_ip} > arping_output.txt"
+    fping('192.168.1.0/24')
+
+async def arpscan(target_ip):
+    command_arping = f"sudo arp-scan --interface=eth0 --localnet > arping_output.txt"
     await run_command(command_arping)
     await main_intro(target_ip)
 
 async def nmap_tcp(target_ip):
-    command_nmap_tcp = f"sudo nmap -sP {target_ip} > nmap_tcp_output.txt"
+    command_nmap_tcp = f"sudo nmap -sP {target_ip} -oN nmap_tcp_output.txt"
     await run_command(command_nmap_tcp)
     await main_intro(target_ip)
 
 async def nmap_udp(target_ip):
-    command_nmap_udp = f"sudo nmap -sU {target_ip} > nmap_udp_output.txt"
+    command_nmap_udp = f"sudo nmap -sU {target_ip} -oN nmap_udp_output.txt"
     await run_command(command_nmap_udp)
     await main_intro(target_ip)
 
 async def nmap_service(target_ip):
-    command_nmap_service = f"sudo nmap -sV {target_ip} > nmap_service_output.txt"
+    command_nmap_service = f"sudo nmap -sV {target_ip} -oN nmap_service_output.txt"
     await run_command(command_nmap_service)
     await main_intro(target_ip)
 
 async def nmap_port(target_ip):
-    command_nmap_port = f"sudo nmap -p- {target_ip} > nmap_port_output.txt"
+    command_nmap_port = f"sudo nmap -p- {target_ip} -oN nmap_port_output.txt"
     await run_command(command_nmap_port)
     await main_intro(target_ip)
 
@@ -43,6 +44,37 @@ async def dirbuster(target_ip):
     user_dirbust_wordlist = "/var/share/wordlists/dirb/big.txt"
     command_dirbuster = f"sudo dirbuster -w {user_dirbust_wordlist} -url {target_ip}"
     await run_command(command_dirbuster)
+
+
+async def domain_checker():
+    # Überprüfen Sie, ob das Verzeichnis bereits vorhanden ist
+    if not os.path.exists("Domain_checker"):
+        print("Domain_checker directory not found. Cloning the repository...")
+        # Klonen Sie das Repository, wenn das Verzeichnis nicht existiert
+        git_clone_command = "sudo git clone https://github.com/IvanGlinkin/Domain_checker.git"
+        await run_command(git_clone_command)
+    else:
+        print("Domain_checker directory already exists.")
+
+    # Wechseln Sie zu dem Verzeichnis, das das geklonte Repository enthält
+    try:
+        os.chdir("Domain_checker")
+        print("Changed directory to Domain_checker")
+    except Exception as e:
+        print(f"Failed to change directory: {e}")
+        return  # Verlässt die Funktion, wenn das Verzeichniswechseln fehlschlägt
+
+    # Machen Sie das Skript ausführbar
+    chmod_command = "sudo chmod +x domain_checker.sh"
+    await run_command(chmod_command)
+
+    # Führen Sie das Skript aus
+    execute_command = "./domain_checker.sh"
+    await run_command(execute_command)
+
+    # Gegebenenfalls zurück zur Hauptfunktion
+    await main_intro()
+
 
 async def main_intro(target_ip):
    #os.system("clear")
@@ -62,14 +94,14 @@ async def main_intro(target_ip):
    print ("")
    print ("1. Visability: fping    | 2. Visability: arping    | 3. Visability: nmap TCP|")
    print ("4. Visability: nmap UDP | 5. Service: nmap         | 6. Ports: nmap         |")
-   print ("7. Enum: Dirbuster      | 8. ---------             | 9. ------              |")
+   print ("7. Enum: Dirbuster      | 8. DomainChecker         | 9. ------              |")
    print ("10. ----                | 11. ---------            | 12. ------             |")
    print("")
    user_dec = input("Please enter the number for the software to use: ")
    if user_dec == "1":
       await fping(target_ip)
    elif user_dec == "2":
-      await arping(target_ip)
+      await arpscan(target_ip)
    elif user_dec == "3":
       await nmap_tcp(target_ip)
    elif user_dec == "4":
@@ -80,11 +112,14 @@ async def main_intro(target_ip):
       await nmap_port(target_ip)
    elif user_dec == "7":
       await dirbuster(target_ip)
+   elif user_dec == "8":
+       await domainchecker(target_ip)
 
 async def main():
     new_folder = input("Please insert the name of the folder for the workspace: ")
     new_folder_command = f"sudo mkdir {new_folder}"
     await run_command(new_folder_command)
+    os.chdir(new_folder)
     target_ip = input("Please enter Target IP: ")
     await main_intro(target_ip)
 
