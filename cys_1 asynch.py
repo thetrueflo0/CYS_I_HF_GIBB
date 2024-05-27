@@ -9,20 +9,14 @@ async def run_command(command):
         print(f"Error: {stderr.decode()}")
     return stdout.decode()
 
-#async def fping(target_ip):
-    #command_fping = f"fping -a -g {target_ip} > fping_output.txt"
-    #await run_command(command_fping)
-    #await main_intro(target_ip)
-
-def run_fping(target_ip):
+def fping(target_ip):
     command = f"fping -a -g {target_ip} > fping_output.txt"
     result = subprocess.run(command, shell=True)
-    print("Command executed, check fping_output.txt for results.")
 
-run_fping('192.168.1.0/24')
+    fping('192.168.1.0/24')
 
-async def arping(target_ip):
-    command_arping = f"arping -I eth0 {target_ip} > arping_output.txt"
+async def arpscan(target_ip):
+    command_arping = f"sudo arp-scan --interface=eth0 --localnet > arping_output.txt"
     await run_command(command_arping)
     await main_intro(target_ip)
 
@@ -76,7 +70,7 @@ async def main_intro(target_ip):
    if user_dec == "1":
       await fping(target_ip)
    elif user_dec == "2":
-      await arping(target_ip)
+      await arpscan(target_ip)
    elif user_dec == "3":
       await nmap_tcp(target_ip)
    elif user_dec == "4":
